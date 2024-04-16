@@ -1,0 +1,44 @@
+<h2>My Friends</h2>
+
+<button type="button" *ngIf="!showAddFriendForm && !selectedFriend && !isFriendSelected" (click)="showAddFriend(true)">Add new friend</button>
+<button type="button" *ngIf="showAddFriendForm && !selectedFriend && !isFriendSelected" (click)="showAddFriend(false)">-</button>
+
+<div *ngIf="showAddFriendForm && !selectedFriend && !isFriendSelected">
+  <form [formGroup]="newFriendForm" (ngSubmit)="postFriend()">
+    
+    <label for="nameFriend">nameFriend:</label>
+    <input type="nameFriend" id="nameFriend" formControlName="nameFriend"><br>
+    <div *ngIf="newFriendForm.get('nameFriend')?.invalid && (newFriendForm.get('nameFriend')?.dirty || newFriendForm.get('nameFriend')?.touched)">
+      <div *ngIf="newFriendForm.get('nameFriend')?.errors?.['required']" class="required-error">Name friend es requerido.</div>
+      <div *ngIf="newFriendForm.get('nameFriend')?.errors?.['nameFriend']" class="required-error">El formato del name Friendno es válido.</div>
+    </div>
+    
+    <label for="likes">likes:</label>
+    <input type="likes" id="likes" formControlName="likes"><br>
+    <div *ngIf="newFriendForm.get('like')?.invalid && (newFriendForm.get('likes')?.dirty || newFriendForm.get('likes')?.touched)">
+      <div *ngIf="newFriendForm.get('likes')?.errors?.['required']" class="required-error">likes es obligatorio.</div>
+    </div>
+    
+    <label for="age">age:</label>
+    <input type="text" id="age" formControlName="age"><br>
+    <div *ngIf="newFriendForm.get('age')?.invalid && (newFriendForm.get('age')?.dirty || newFriendForm.get('age')?.touched)">
+      <div *ngIf="newFriendForm.get('age')?.errors?.['required']" class="required-error">age es obligatorio.</div>
+    </div>
+    
+    <button type="submit" [disabled]="newFriendForm.invalid">Add User</button> 
+  </form>
+</div>
+
+<ul class="friends" *ngIf="!selectedFriend">
+  <li *ngFor="let friend of friends| paginate: { itemsPerPage: limit, currentPage: page, totalItems: total }">
+    <button type="button" (click)="onSelect(friend)">
+      <span  class="nameFriend">{{friend._id}} {{friend.likes}} {{friend.age}}</span>
+    </button>
+  </li>
+</ul>
+
+<app-user-details *ngIf="selectedFriend" [friend]="selected" (deselect)="deselectFriend()" (userUpdated)="onUpdated($event)"></app-user-details> 
+
+<pagination-controls (pageChange)="handlePageChange($event)" nextLabel="Next" previousLabel="Previous"></pagination-controls>
+
+<div class="mt-3">  Items per Page: <select (change)="handleLimitChange($event)"><option *ngFor="let limitUser of limitUsers" [value]="limitUser">{{ limitUser }}</option>
